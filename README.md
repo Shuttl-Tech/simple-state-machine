@@ -14,7 +14,7 @@ This library provides a **deterministic finite state machine**.
 
 
 ```
-@machine(states=["earth", "space"], loader="load_state")
+@machine(states=["earth", "space"], init="load_state")
 class MyMachine(object):
     def __init__(self, name):
         self.name = name
