@@ -47,7 +47,7 @@ def transition(sources: List[str], destination: str):
             validate_state(destination, self.states)
             if self.current_state not in sources:
                 raise InvalidMoveError(
-                    f"Current state - {self.current_state} is not in source states"
+                    f"Current state - {self.current_state} is not in source states - {', '.join(sources)}"
                 )
             f(self, *args, **kwargs)
             self.current_state = destination
