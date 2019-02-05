@@ -11,7 +11,7 @@ from sfsm.machine import machine, transition
 
 
 def test_no_load_function_declared_raises_no_loader_found_exception():
-    @machine(states=["A", "B"], loader="abc")
+    @machine(states=["A", "B"], init="abc")
     class MyMachine:
         pass
 
@@ -20,7 +20,7 @@ def test_no_load_function_declared_raises_no_loader_found_exception():
 
 
 def test_raise_loader_exception_if_loader_throws_any_exception():
-    @machine(states=["A", "B"], loader="load_state")
+    @machine(states=["A", "B"], init="load_state")
     class MyMachine:
         def load_state(self):
             raise Exception("Haha! You caught me.")
@@ -30,7 +30,7 @@ def test_raise_loader_exception_if_loader_throws_any_exception():
 
 
 def test_sfsm_raises_unknown_state_exception_when_load_function_sets_unknown_state():
-    @machine(states=[], loader="load_state")
+    @machine(states=[], init="load_state")
     class MyMachine:
         def load_state(self):
             return "STATE"
@@ -40,7 +40,7 @@ def test_sfsm_raises_unknown_state_exception_when_load_function_sets_unknown_sta
 
 
 def test_sfsm_raises_invalid_move_error_when_current_state_is_not_source_state():
-    @machine(states=["A", "B"], loader="load_state")
+    @machine(states=["A", "B"], init="load_state")
     class MyMachine:
         def load_state(self):
             return "B"
@@ -55,7 +55,7 @@ def test_sfsm_raises_invalid_move_error_when_current_state_is_not_source_state()
 
 
 def test_non_transition_functions_are_accessible():
-    @machine(states=["A", "B"], loader="load_state")
+    @machine(states=["A", "B"], init="load_state")
     class MyMachine:
         def load_state(self):
             return "A"
@@ -85,7 +85,7 @@ def test_transition_raises_not_machine_error_if_class_is_not_machine():
 
 
 def test_transition_raises_invalid_state_error_if_sources_are_not_valid():
-    @machine(states=["A", "B"], loader="load_state")
+    @machine(states=["A", "B"], init="load_state")
     class MyMachine:
         def load_state(self):
             return "A"
@@ -100,7 +100,7 @@ def test_transition_raises_invalid_state_error_if_sources_are_not_valid():
 
 
 def test_transition_raises_invalid_state_error_if_destination_is_not_valid():
-    @machine(states=["A", "B"], loader="load_state")
+    @machine(states=["A", "B"], init="load_state")
     class MyMachine:
         def load_state(self):
             return "A"
@@ -115,7 +115,7 @@ def test_transition_raises_invalid_state_error_if_destination_is_not_valid():
 
 
 def test_transition_from_multiple_states():
-    @machine(states=["A", "B", "C"], loader="load_state")
+    @machine(states=["A", "B", "C"], init="load_state")
     class MyMachine:
         def load_state(self):
             return "A"
@@ -149,7 +149,7 @@ def test_transition_from_multiple_states():
 
 
 def test_simple_transition():
-    @machine(states=["A", "B"], loader="load_state")
+    @machine(states=["A", "B"], init="load_state")
     class MyMachine:
         def load_state(self):
             return "A"
@@ -167,7 +167,7 @@ def test_simple_transition():
 
 
 def test_class_with_constructor():
-    @machine(states=["earth", "space"], loader="load_state")
+    @machine(states=["earth", "space"], init="load_state")
     class MyMachine(object):
         def __init__(self, name):
             self.name = name

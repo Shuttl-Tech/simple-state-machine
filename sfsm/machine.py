@@ -10,14 +10,14 @@ from sfsm.errors import (
 )
 
 
-def machine(states: List, loader: str):
+def machine(states: List, init: str):
     def decorator(cls):
         @wraps(cls)
         def func(*args, **kwargs):
             obj = cls(*args, **kwargs)
             obj.states = states
             try:
-                current_state = getattr(obj, loader)()
+                current_state = getattr(obj, init)()
             except AttributeError:
                 raise LoaderNotFound("Given loader wasn't found in the class.")
             except Exception as e:
