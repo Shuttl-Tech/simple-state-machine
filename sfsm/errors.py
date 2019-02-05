@@ -1,4 +1,4 @@
-class UnknownStateError(Exception):
+class InvalidStateError(Exception):
     pass
 
 
@@ -7,4 +7,12 @@ class LoaderException(Exception):
 
 
 class LoaderNotFound(Exception):
+    pass
+
+
+class InvalidMoveError(Exception):
+    pass
+
+
+class MachineNotFound(Exception):
     pass
