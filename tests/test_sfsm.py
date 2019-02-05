@@ -3,7 +3,6 @@ import pytest
 from sfsm.errors import (
     LoaderNotFound,
     LoaderException,
-    InvalidStateError,
     MachineNotFound,
     InvalidStateError,
     InvalidMoveError,
@@ -165,3 +164,24 @@ def test_simple_transition():
     assert m.current_state == "B"
     with pytest.raises(InvalidMoveError):
         m.move()
+
+
+def test_class_with_constructor():
+    @machine(states=["earth", "space"], loader="load_state")
+    class MyMachine(object):
+        def __init__(self, name):
+            self.name = name
+
+        def load_state(self):
+            return "earth"
+
+        @transition(sources=["earth"], destination="space")
+        def launch(self):
+            pass
+
+    m = MyMachine("Rocket")
+    assert m.name == "Rocket"
+    assert m.current_state == "earth"
+
+    m.launch()
+    assert m.current_state == "space"
