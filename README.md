@@ -34,3 +34,19 @@ m.launch()
 m.launch()
 # InvalidMoveError: Current state - space is not in source states - earth
 ```
+
+## Development
+To develop this, initialise a virtualenv
+```
+python3 -m venv venv
+. ./venv/bin/activate
+```
+Inside the venv
+```
+pipenv install --dev --system
+```
+
+### Tests
+```
+make tests
+```
