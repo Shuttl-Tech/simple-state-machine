@@ -13,7 +13,7 @@ This library provides a **deterministic finite state machine**.
 ## Usage
 
 
-```
+```python
 @machine(states=["earth", "space"], init="load_state")
 class MyMachine(object):
     def __init__(self, name):
