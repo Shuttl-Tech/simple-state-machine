@@ -16,3 +16,7 @@ class InvalidMoveError(Exception):
 
 class MachineNotFound(Exception):
     pass
+
+
+class UnintendedOperationError(Exception):
+    pass

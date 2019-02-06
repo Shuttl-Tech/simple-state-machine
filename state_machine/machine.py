@@ -7,7 +7,7 @@ from state_machine.errors import (
     InvalidStateError,
     MachineNotFound,
     InvalidMoveError,
-)
+    UnintendedOperationError)
 
 
 def machine(states: List):
@@ -53,6 +53,9 @@ def transition(sources: List[str], destination: str):
                     f"Current state - {self.current_state} is not in source states - {', '.join(sources)}"
                 )
             f(self, *args, **kwargs)
+            if self.load_state() != destination:
+                raise UnintendedOperationError("The transition didn't update the state to intended destination")
+
             self.current_state = destination
 
         return func

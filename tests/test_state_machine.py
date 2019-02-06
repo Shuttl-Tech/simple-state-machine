@@ -6,7 +6,7 @@ from state_machine.errors import (
     MachineNotFound,
     InvalidStateError,
     InvalidMoveError,
-)
+    UnintendedOperationError)
 from state_machine.machine import machine, transition
 
 
@@ -57,15 +57,18 @@ def test_machine_raises_invalid_move_error_when_current_state_is_not_source_stat
 def test_non_transition_functions_are_accessible():
     @machine(states=["A", "B"])
     class MyMachine:
+        def __init__(self):
+            self.moving = False
+
         def load_state(self):
-            return "A"
+            return "B" if self.moving else "A"
 
         def some_func(self):
             return "Hello"
 
         @transition(sources=["A"], destination="B")
         def move(self):
-            return "MOVED"
+            self.moving = True
 
     m = MyMachine()
     assert m.some_func() == "Hello"
@@ -87,12 +90,15 @@ def test_transition_raises_not_machine_error_if_class_is_not_machine():
 def test_transition_raises_invalid_state_error_if_sources_are_not_valid():
     @machine(states=["A", "B"])
     class MyMachine:
+        def __init__(self):
+            self.moving = False
+
         def load_state(self):
             return "A"
 
         @transition(sources=["A", "C"], destination="B")
         def move(self):
-            pass
+            self.moving = True
 
     with pytest.raises(InvalidStateError):
         m = MyMachine()
@@ -102,12 +108,15 @@ def test_transition_raises_invalid_state_error_if_sources_are_not_valid():
 def test_transition_raises_invalid_state_error_if_destination_is_not_valid():
     @machine(states=["A", "B"])
     class MyMachine:
+        def __init__(self):
+            self.moving = False
+
         def load_state(self):
-            return "A"
+            return "C" if self.moving else "B"
 
         @transition(sources=["A"], destination="C")
         def move(self):
-            pass
+            self.moving = True
 
     with pytest.raises(InvalidStateError):
         m = MyMachine()
@@ -117,16 +126,28 @@ def test_transition_raises_invalid_state_error_if_destination_is_not_valid():
 def test_transition_from_multiple_states():
     @machine(states=["sky", "tree", "ground"])
     class MyMachine:
+        def __init__(self):
+            self.flying = True
+            self.stuck_on_tree = False
+
         def load_state(self):
-            return "sky"
+            if self.flying:
+                return "sky"
+
+            if self.stuck_on_tree:
+                return "tree"
+
+            return "ground"
 
         @transition(sources=["sky"], destination="tree")
         def fall_on_tree(self):
-            pass
+            self.flying = False
+            self.stuck_on_tree = True
 
         @transition(sources=["tree", "sky"], destination="ground")
         def fall(self):
-            pass
+            self.flying = False
+            self.stuck_on_tree = False
 
     m1 = MyMachine()
     assert m1.current_state == "sky"
@@ -151,12 +172,17 @@ def test_transition_from_multiple_states():
 def test_simple_transition():
     @machine(states=["ground", "sky"])
     class MyMachine:
+        def __init__(self):
+            self.moving = False
+
         def load_state(self):
+            if self.moving:
+                return "sky"
             return "ground"
 
         @transition(sources=["ground"], destination="sky")
         def jump(self):
-            pass
+            self.moving = True
 
     m = MyMachine()
     assert m.current_state == "ground"
@@ -171,12 +197,17 @@ def test_class_with_constructor():
     class MyMachine(object):
         def __init__(self, name):
             self.name = name
+            self.state = "rest"
 
         def load_state(self):
-            return "earth"
+            if self.state == "rest":
+                return "earth"
+            elif self.state == "moving":
+                return "space"
 
         @transition(sources=["earth"], destination="space")
         def launch(self):
+            self.state = "moving"
             pass
 
     m = MyMachine("Rocket")
@@ -185,3 +216,18 @@ def test_class_with_constructor():
 
     m.launch()
     assert m.current_state == "space"
+
+
+def test_transition_checks_load_state_before_moving_to_destination():
+    @machine(states=["delhi", "gurgaon"])
+    class ShuttlBus:
+        def load_state(self):
+            return "delhi"
+
+        @transition(sources=["delhi"], destination="gurgaon")
+        def run(self):
+            return "AC SEAT GUARANTEED!"
+
+    with pytest.raises(UnintendedOperationError):
+        bus = ShuttlBus()
+        bus.run()
