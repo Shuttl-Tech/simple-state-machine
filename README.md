@@ -14,11 +14,12 @@ This library provides a **deterministic finite state machine**.
 
 
 ```python
-@machine(states=["earth", "space"], init="load_state")
+@machine(states=["earth", "space"])
 class Rocket(object):
     def __init__(self):
         self.moving = False
           
+    # Mandatory to define this method
     def load_state(self):
         return "space" if self.moving else "earth"
 
