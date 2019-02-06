@@ -35,7 +35,7 @@ rocket.launch()
 # InvalidMoveError: Current state - space is not in source states - earth
 ```
 
-### What if my function has 2(or few) possible transitions?
+### What if my function has 2(or more) possible transitions?
 It is quite common to have functions which have 2 or more possible transitions. 
 
 For eg. You live in the plains and depending on the weather you want to go to a mountain or a beach for a vacation. If its cold, you'd like to go to a beach else mountain 
