@@ -22,6 +22,9 @@ This library provides a **deterministic finite state machine**.
 
 
 ```python
+from state_machine.machine import machine, transition
+
+
 @machine(states=["earth", "space"])
 class Rocket(object):
     def __init__(self):
@@ -47,50 +50,64 @@ rocket.launch()
 ### What if my function has 2(or more) possible transitions?
 It is quite common to have functions which have 2 or more possible transitions. 
 
-For eg. You live in the plains and depending on the weather you want to go to a mountain or a beach for a vacation. If its cold, you'd like to go to a beach else mountain 
+For eg. You are collecting a payment for an order. If the payment is valid, you want to complete the payment, else you want to fail it.
 
 ```python
-@machine(states=["plains", "mountain", "beach"])
-class VacationPlan:
+from state_machine.machine import machine, transition
+
+
+@machine(states=["INIT", "PAYMENT_IN_PROGRESS", "PAYMENT_COMPLETE", "PAYMENT_FAILED"])
+class Order:
     def __init__(self):
-        self.is_cold_weather = False
-        self.on_vacation = False
+        self.payment = ""
         
     def load_state(self):
-        if not self.on_vacation:
-            return "plains"
+        if not self.payment:
+            return "INIT"
         
-        return "beach" if self.is_cold_weather else "mountain"
+        if self.payment == "SUCCESS":
+            return "PAYMENT_COMPLETE"
         
-    @transition(sources=["plains"], destination="beach")
-    def get_away_from_cold_weather(self):
-        self.is_cold_weather = True
-        self.on_vacation = True
-        print("We're going to the beach")
-    
-    
-    @transition(sources=["plains"], destination="mountain")
-    def get_away_from_warm_weather(self):
-        self.is_cold_weather = False
-        self.on_vacation = True
+        if self.payment == "FAILED":
+            return "PAYMENT_FAILED"
         
-    def get_away(self, temperature: int): # Temperature is in Celsius
-        assert self.load_state() == "plains"
+        return "PAYMENT_IN_PROGRESS"
         
-        if temperature > 20:
-            return self.get_away_from_warm_weather()
+    @transition(sources=["INIT"], destination="PAYMENT_IN_PROGRESS")
+    def create_payment_request(self):
+        self.payment = "IN_PROGRESS"
         
-        return self.get_away_from_cold_weather()
+    def collect_payment(self, payment):
+        assert self.load_state() == "PAYMENT_IN_PROGRESS"
+        
+        if self.payment == "SUCCESS":
+            self.payment_success()
+        elif self.payment == "FAILED":
+            self.payment_failed()
+            
+    @transition(sources=["PAYMENT_IN_PROGRESS"], destination="PAYMENT_COMPLETE")
+    def payment_success(self):
+        self.payment = "SUCCESS"
+        
+    @transition(sources=["PAYMENT_IN_PROGRESS"], destination="PAYMENT_FAILED")
+    def payment_failed(self):
+        self.payment = "FAILED"
         
         
-plan = VacationPlan()
-plan.get_away(23)
-# We're going to the mountain
+order1 = Order()
+# assert order.current_state == "INIT"
+order1.create_payment_request()
+# assert order.current_state == "PAYMENT_IN_PROGRESS"
+order1.collect_payment("SUCCESS")
+# assert order.current_state == "PAYMENT_COMPLETE"
 
-plan = VacationPlan()
-plan.get_away(10)
-# We're going to the beach
 
+order2 = Order()
+# assert order.current_state == "INIT"
+order2.create_payment_request()
+# assert order.current_state == "PAYMENT_IN_PROGRESS"
+order2.collect_payment("FAILED")
+# assert order.current_state == "PAYMENT_FAILED"
 ```
 
 ####  Note
