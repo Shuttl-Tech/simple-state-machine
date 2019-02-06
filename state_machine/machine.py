@@ -1,4 +1,3 @@
-from functools import wraps
 from typing import List
 
 from state_machine.errors import (
@@ -7,17 +6,17 @@ from state_machine.errors import (
     InvalidStateError,
     MachineNotFound,
     InvalidMoveError,
-    UnintendedOperationError)
+    UnintendedOperationError,
+)
 
 
 def machine(states: List):
     def decorator(cls):
-        @wraps(cls)
-        def func(*args, **kwargs):
-            obj = cls(*args, **kwargs)
-            obj.states = states
+        def init(self, states):
+            self.states = states
+
             try:
-                current_state = getattr(obj, "load_state")()
+                current_state = getattr(self, "load_state")()
             except AttributeError:
                 raise LoaderNotFound("load_state method not defined in the class.")
             except Exception as e:
@@ -26,13 +25,19 @@ def machine(states: List):
             if current_state not in states:
                 raise InvalidStateError(f"Current state - {current_state} is not known")
 
-            obj.current_state = current_state
+            self.current_state = current_state
 
             # Tag the class that its a simple state state_machine
-            obj.is_sfsm = True
-            return obj
+            self.is_sfsm = True
 
-        return func
+        class_constructor = cls.__init__
+
+        def __init__(self, *args, **kwargs):
+            class_constructor(self, *args, **kwargs)
+            init(self, states)
+
+        setattr(cls, "__init__", __init__)
+        return cls
 
     return decorator
 
@@ -54,7 +59,9 @@ def transition(sources: List[str], destination: str):
                 )
             f(self, *args, **kwargs)
             if self.load_state() != destination:
-                raise UnintendedOperationError("The transition didn't update the state to intended destination")
+                raise UnintendedOperationError(
+                    "The transition didn't update the state to intended destination"
+                )
 
             self.current_state = destination
 
