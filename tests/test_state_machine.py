@@ -115,55 +115,55 @@ def test_transition_raises_invalid_state_error_if_destination_is_not_valid():
 
 
 def test_transition_from_multiple_states():
-    @machine(states=["A", "B", "C"])
+    @machine(states=["sky", "tree", "ground"])
     class MyMachine:
         def load_state(self):
-            return "A"
+            return "sky"
 
-        @transition(sources=["A"], destination="B")
-        def single_move(self):
+        @transition(sources=["sky"], destination="tree")
+        def fall_on_tree(self):
             pass
 
-        @transition(sources=["A", "B"], destination="C")
-        def multi_move(self):
+        @transition(sources=["tree", "sky"], destination="ground")
+        def fall(self):
             pass
 
     m1 = MyMachine()
-    assert m1.current_state == "A"
-    m1.single_move()
-    assert m1.current_state == "B"
+    assert m1.current_state == "sky"
+    m1.fall_on_tree()
+    assert m1.current_state == "tree"
     with pytest.raises(InvalidMoveError):
-        m1.single_move()
+        m1.fall_on_tree()
 
     m2 = MyMachine()
-    assert m2.current_state == "A"
-    m2.single_move()
-    assert m2.current_state == "B"
-    m2.multi_move()
-    assert m2.current_state == "C"
+    assert m2.current_state == "sky"
+    m2.fall_on_tree()
+    assert m2.current_state == "tree"
+    m2.fall()
+    assert m2.current_state == "ground"
 
     m3 = MyMachine()
-    assert m3.current_state == "A"
-    m3.multi_move()
-    assert m3.current_state == "C"
+    assert m3.current_state == "sky"
+    m3.fall()
+    assert m3.current_state == "ground"
 
 
 def test_simple_transition():
-    @machine(states=["A", "B"])
+    @machine(states=["ground", "sky"])
     class MyMachine:
         def load_state(self):
-            return "A"
+            return "ground"
 
-        @transition(sources=["A"], destination="B")
-        def move(self):
+        @transition(sources=["ground"], destination="sky")
+        def jump(self):
             pass
 
     m = MyMachine()
-    assert m.current_state == "A"
-    m.move()
-    assert m.current_state == "B"
+    assert m.current_state == "ground"
+    m.jump()
+    assert m.current_state == "sky"
     with pytest.raises(InvalidMoveError):
-        m.move()
+        m.jump()
 
 
 def test_class_with_constructor():
