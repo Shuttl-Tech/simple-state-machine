@@ -111,7 +111,7 @@ order2.collect_payment("FAILED")
 ```
 
 ####  Note
-Decisions are not a concept in deterministic FSMs, hence we won't be supporting it. This means you will have to assert the current state for a decision accordingly.
+Decision is not a concept in deterministic FSMs, hence we won't be supporting it. This means you will have to assert the current state for a decision accordingly.
 
 ## Development
 To develop this, initialise a virtualenv
