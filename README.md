@@ -15,24 +15,73 @@ This library provides a **deterministic finite state machine**.
 
 ```python
 @machine(states=["earth", "space"], init="load_state")
-class MyMachine(object):
-    def __init__(self, name):
-        self.name = name
+class Rocket(object):
+    def __init__(self):
+        self.moving = False
           
     def load_state(self):
-        return "earth"
+        return "space" if self.moving else "earth"
 
     @transition(sources=["earth"], destination="space")
     def launch(self):
-        pass
+        self.moving = True
             
-m = MyMachine("Rocket")
+rocket = Rocket()
 # assert m.current_state == "earth"
-m.launch()
+rocket.launch()
 # assert m.current_state == "space"
 
-m.launch()
+rocket.launch()
 # InvalidMoveError: Current state - space is not in source states - earth
+```
+
+### What if my function has 2(or few) possible transitions?
+It is quite common to have functions which have 2 or more possible transitions. 
+
+For eg. You live in the plains and depending on the weather you want to go to a mountain or a beach for a vacation. If its cold, you'd like to go to a beach else mountain 
+
+```python
+@machine(states=["plains", "mountain", "beach"])
+class VacationPlan:
+    def __init__(self):
+        self.is_cold_weather = False
+        self.on_vacation = False
+        
+    def load_state(self):
+        if not self.on_vacation:
+            return "plains"
+        
+        return "beach" if self.is_cold_weather else "mountain"
+        
+    @transition(sources=["plains"], destination="beach")
+    def get_away_from_cold_weather(self):
+        self.is_cold_weather = True
+        self.on_vacation = True
+        print("We're going to the beach")
+    
+    
+    @transition(sources=["plains"], destination="mountain")
+    def get_away_from_warm_weather(self):
+        self.is_cold_weather = False
+        self.on_vacation = True
+        
+    def get_away(self, temperature: int): # Temperature is in Celsius
+        assert self.load_state() == "plains"
+        
+        if temperature > 20:
+            return self.get_away_from_warm_weather()
+        
+        return self.get_away_from_cold_weather()
+        
+        
+plan = VacationPlan()
+plan.get_away(23)
+# We're going to the mountain
+
+plan = VacationPlan()
+plan.get_away(10)
+# We're going to the beach
+
 ```
 
 ## Development
