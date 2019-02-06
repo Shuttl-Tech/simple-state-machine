@@ -2,7 +2,15 @@
 
 It is a python library with which you can `decorate` your class to make it a state machine.
 
-## Finite State Machine
+## Installation
+
+```bash
+pip install simple-state-machine
+```
+
+## What is a state machine?
+
+A state machine which has a finite set of states is called a finite state machine. The one which doesn't have finite states is called a non-finite state machine.
 
 A finite state machine is a mathematical concept in which the machine has a state and uses transitions to move from one state to another. Finite state machines can be of 2 types - deterministic and non-deterministic
 
@@ -10,7 +18,7 @@ A deterministic finite state machine produces the same result after given transi
 
 This library provides a **deterministic finite state machine**.
 
-## Usage
+## Basic Usage
 
 
 ```python
