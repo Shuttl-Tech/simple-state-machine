@@ -10,16 +10,16 @@ from state_machine.errors import (
 )
 
 
-def machine(states: List, init: str):
+def machine(states: List):
     def decorator(cls):
         @wraps(cls)
         def func(*args, **kwargs):
             obj = cls(*args, **kwargs)
             obj.states = states
             try:
-                current_state = getattr(obj, init)()
+                current_state = getattr(obj, "load_state")()
             except AttributeError:
-                raise LoaderNotFound("Given loader wasn't found in the class.")
+                raise LoaderNotFound("load_state method not defined in the class.")
             except Exception as e:
                 raise LoaderException(e)
 
