@@ -80,9 +80,9 @@ class Order:
     def collect_payment(self, payment):
         assert self.load_state() == "PAYMENT_IN_PROGRESS"
         
-        if self.payment == "SUCCESS":
+        if payment == "SUCCESS":
             self.payment_success()
-        elif self.payment == "FAILED":
+        elif payment == "FAILED":
             self.payment_failed()
             
     @transition(sources=["PAYMENT_IN_PROGRESS"], destination="PAYMENT_COMPLETE")
