@@ -1,7 +1,7 @@
 from functools import wraps
 from typing import List
 
-from sfsm.errors import (
+from state_machine.errors import (
     LoaderException,
     LoaderNotFound,
     InvalidStateError,
@@ -27,6 +27,8 @@ def machine(states: List, init: str):
                 raise InvalidStateError(f"Current state - {current_state} is not known")
 
             obj.current_state = current_state
+
+            # Tag the class that its a simple state state_machine
             obj.is_sfsm = True
             return obj
 
@@ -40,11 +42,12 @@ def transition(sources: List[str], destination: str):
         def func(self, *args, **kwargs):
             if not hasattr(self, "is_sfsm"):
                 raise MachineNotFound(
-                    "Transition can only be applied on a machine's method."
+                    "Transition can only be applied on a state_machine's method."
                 )
 
             [validate_state(source, self.states) for source in sources]
             validate_state(destination, self.states)
+
             if self.current_state not in sources:
                 raise InvalidMoveError(
                     f"Current state - {self.current_state} is not in source states - {', '.join(sources)}"

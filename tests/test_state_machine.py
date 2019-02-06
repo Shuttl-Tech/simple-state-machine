@@ -1,13 +1,13 @@
 import pytest
 
-from sfsm.errors import (
+from state_machine.errors import (
     LoaderNotFound,
     LoaderException,
     MachineNotFound,
     InvalidStateError,
     InvalidMoveError,
 )
-from sfsm.machine import machine, transition
+from state_machine.machine import machine, transition
 
 
 def test_no_load_function_declared_raises_no_loader_found_exception():
