@@ -133,7 +133,9 @@ The library raises the following errors.
    4. `InvalidStateError` - This is raised when the state machine encounters an unknown state. The state machine raises this error in 2 situations. One, when **load_state** returns an invalid state. And, when you pass invalid source or destination in a **transition**.
    5. `InvalidMoveError` - It is raised when you enter a transition with a *non-source* state.
    6. `UnintendedOperationError` - The state machine calls **load_state** function after each transition to ensure that the state has been updated to the destination. If a transition doesn't update the state of the machine to destination, this error is raised. For eg-
-   ```python
+   
+```python
+
 @transition(source=["earth"], destination="sky")
 def launch(self):
     pass # the function didn't do anything.
