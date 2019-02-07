@@ -1,6 +1,17 @@
 # Simple State Machine
 
 It is a python library with which you can `decorate` your class to make it a state machine.
+<!-- toc -->
+
+- [Installation](#installation)
+- [State Machine](#state-machine)
+- [Basic Usage](#basic-usage)
+  * [What if my function has 2(or more) possible transitions?](#what-if-my-function-has-2or-more-possible-transitions)
+  * [Error Handling](#error-handling)
+- [Developers Guide](#developers-guide)
+  * [Setup](#setup)
+  * [Testing Mode](#testing-mode)
+<!-- tocstop -->
 
 ## Installation
 
@@ -8,7 +19,7 @@ It is a python library with which you can `decorate` your class to make it a sta
 pip install simple-state-machine
 ```
 
-## What is a state machine?
+## State Machine
 
 A state machine which has a finite set of states is called a finite state machine. The one which doesn't have finite states is called a non-finite state machine.
 
@@ -128,18 +139,15 @@ def launch(self):
     pass # the function didn't do anything.
 ```
 
-## Development
-To develop this, initialise a virtualenv
+## Developer's Guide
+### Setup
+We use `pipenv` to manage python packages. To setup your dev environment, locate yourself in the project directory and run the following commands. 
 ```
-python3 -m venv venv
-. ./venv/bin/activate
-```
-Inside the venv
-```
-pipenv install --dev --system
+pipenv shell
+pipenv install --dev
 ```
 
-### Tests
+### Testing mode
 ```
 make tests
 ```
