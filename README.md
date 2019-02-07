@@ -143,9 +143,8 @@ def launch(self):
 
 ## Developer's Guide
 ### Setup
-We use `pipenv` to manage python packages. To setup your dev environment, locate yourself in the project directory and run the following commands. 
+We use `pipenv` to manage python packages. To setup your dev environment, locate yourself in the project directory and execute 
 ```
-pipenv shell
 pipenv install --dev
 ```
 
