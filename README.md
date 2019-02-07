@@ -113,6 +113,21 @@ order2.collect_payment("FAILED")
 ####  Note
 Decision is not a concept in deterministic FSMs, hence we won't be supporting it. This means you will have to assert the current state for a decision accordingly.
 
+### Error Handling
+The library raises the following errors.
+
+   1. `LoaderNotFound` - If your class doesn't implement a **load_state** method.
+   2. `LoaderException` - If the **load_state** method threw an exception.
+   3. `MachineNotFound` - If you used a **transition** decorator on a method whose class is not **machine** decorated.
+   4. `InvalidStateError` - This is raised when the state machine encounters an unknown state. The state machine raises this error in 2 situations. One, when **load_state** returns an invalid state. And, when you pass invalid source or destination in a **transition**.
+   5. `InvalidMoveError` - It is raised when you enter a transition with a *non-source* state.
+   6. `UnintendedOperationError` - The state machine calls **load_state** function after each transition to ensure that the state has been updated to the destination. If a transition doesn't update the state of the machine to destination, this error is raised. For eg-
+   ```python
+@transition(source=["earth"], destination="sky")
+def launch(self):
+    pass # the function didn't do anything.
+```
+
 ## Development
 To develop this, initialise a virtualenv
 ```
