@@ -58,6 +58,9 @@ rocket.launch()
 # InvalidMoveError: Current state - space is not in source states - earth
 ```
 
+### Note
+A data member `current_state` is added to your class' object. You may use its value to assert in decisions or in your tests.
+
 ### What if my function has 2(or more) possible transitions?
 It is quite common to have functions which have 2 or more possible transitions. 
 
